@@ -1,32 +1,36 @@
-п»ї#include<iostream>
+#include<iostream>
 using namespace std;
 
 #define tab "\t"
 
-class Element{
-	int Data;		//Р—РЅР°С‡РµРЅРёРµ СЌР»РµРјРµРЅС‚Р°
-	Element* pNext;	//РђРґСЂРµСЃ СЃР»РµРґСѓСЋС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р°
-	static int count;//РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ
+class Element {
+	int Data; //Значение элемента
+	Element* pNext; //Адрес следующего элемента
+	static int count;//количество элементов
 public:
-	Element(int Data, Element* pNext = nullptr) :Data(Data), pNext(pNext)
+	Element(int Data, Element* pNext = nullptr)
 	{
 		++count;
+		//cout << " EConstructor:"
 	}
 	~Element()
 	{
 		--count;
+		cout << "EDestructor:\t" << this << endl;
 	}
 	friend class Iterator;
 	friend class List;
 };
 int Element::count = 0;
 
-class Iterator {
-	Element* Temp;
+class Iterator{
+Element * Temp;
 public:
 	Iterator(Element* Temp) :Temp(Temp) {
+		cout << "IConstructor:\t" << this << endl;
 	}
 	~Iterator() {
+		cout << "IDestructor:\t" << endl;
 	}
 	Iterator& operator++() {
 		Temp = Temp->pNext;
@@ -40,13 +44,13 @@ public:
 	const int& operator*()const {
 		return Temp->Data;
 	}
-	int& operator*(){
+	int& operator*() {
 		return Temp->Data;
 	}
 	bool operator==(const Iterator& other) const {
 		return this->Temp == other.Temp;
 	}
-	bool operator!=(const Iterator& other) const{
+	bool operator!=(const Iterator& other) const {
 		return !(*this == other);
 	}
 };
@@ -54,7 +58,7 @@ public:
 class List
 {
 	int size;
-	Element* Head;	//РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РЅР°С‡Р°Р»СЊРЅС‹Р№ (РЅСѓР»РµРІРѕР№) СЌР»РµРјРµРЅС‚ СЃРїРёСЃРєР°.
+	Element* Head;	//Указатель на начальный (нулевой) элемент списка.
 public:
 	Iterator begin() {
 		return Head;
@@ -68,14 +72,13 @@ public:
 	const Iterator end() const {
 		return nullptr;
 	}
-	List(){
-		size=0;
-		Head = nullptr;	//Р•СЃР»Рё Р“РѕР»РѕРІР° СЃРѕРґРµСЂР¶РёС‚ 0, Р·РЅР°С‡РёС‚ СЃРїРёСЃРѕРє РїСѓСЃС‚
-		#ifdef CHECK
+	List()
+	{
+		//size=0;
+		Head = nullptr;	//Если Голова содержит 0, значит список пуст
 		cout << "LConstructor:\t" << this << endl;
-		#endif
 	}
-	explicit List(int size):List(){
+	explicit List(int size) :List() {
 		//this->Head = nullptr;
 		//this->size = 0;
 		while (size--) {
@@ -83,17 +86,14 @@ public:
 		}
 		//cout << "LSizeConstructor:\t" << this << endl;
 	}
-	List(const List& other) : List() {
+	List(const List& other) {
 		Element* Temp = other.Head;
 		while (Temp) {
 			push_back(Temp->Data);
 			Temp = Temp->pNext;
 		}
-	}
-	List(List&& other) {
-		this->Head = other.Head;
-		this->size = other.size;
-		other.Head = nullptr;
+		cout << "CopyConstructor:\t" << this << endl;
+
 	}
 	List(const initializer_list<int> il) : List() {
 		//cout << typeid(il.begin()).name() << endl;
@@ -106,7 +106,9 @@ public:
 		while (Head) {
 			pop_front();
 		}
+		cout << "LDestructor:\t" << this << endl;
 	}
+	//		 Operators:
 	int& operator[](const int index) {
 		if (index >= size) {
 			throw exception("Out of range");
@@ -117,61 +119,53 @@ public:
 		}
 		return Temp->Data;
 	}
+
 	List& operator=(const List& other) {
-		if (this != &other) {
-			while (Head) {
-				pop_front();
-			}
-			for (Element* Temp = other.Head; Temp != nullptr; Temp = Temp->pNext) {
-				push_back(Temp->Data);
-			}
+		while (Head) {
+			pop_front();
 		}
+		for (Element* Temp = other.Head; Temp != nullptr; Temp = Temp->pNext) {
+			push_back(Temp->Data);
+		}
+		cout << "CopyAssigment:\t" << endl;
 		return *this;
 	}
-	List& operator=(List&& other) {
-			while (Head) {
-				pop_front();
-			}
-			this->Head = other.Head;
-			this->size = other.size;
-			other.Head = nullptr;
-		return *this;
-	}
-	
-	void push_front(int Data)	//Р”РѕР±Р°РІР»СЏРµС‚ Р·РЅР°С‡РµРЅРёРµ РІ РЅР°С‡Р°Р»Рѕ СЃРїРёСЃРєР°
+	//			Добавление элементов
+	void push_front(int Data)	//Добавляет значение в начало списка
 	{
-		
+
 		/*
-		//1) РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚
+		//1) Создаем новый элемент
 		Element* New = new Element(Data);
-		//2) РџСЂРёСЃРѕРµРґРёРЅСЏРµРј РќРћР’Р«Р™ СЌР»РµРјРµРЅС‚ Рє СЃРїРёСЃРєСѓ
+		//2) Присоединяем НОВЫЙ элемент к списку
 		New->pNext = Head;
-		//3)Р“РѕРІРѕСЂРёРј, С‡С‚Рѕ РќРћР’Р«Р™ СЌР»РµРјРµРЅС‚ СЏРІР»СЏРµС‚СЃСЏ РќРђР§РђР›РћРњ (Head) СЃРїРёСЃРєР°:
+		//3)Говорим, что НОВЫЙ элемент является НАЧАЛОМ (Head) списка:
 		Head = New;*/
 
 		Head = new Element(Data, Head);
 		++size;
 	}
-	void push_back(int Data)	//Р”РѕР±Р°РІР»СЏРµС‚ Р·РЅР°С‡РµРЅРёРµ РІ РєРѕРЅРµС† СЃРїРёСЃРєР°
+	void push_back(int Data)	//Добавляет значение в конец списка
 	{
-		if (Head == nullptr)//Р•СЃР»Рё СЃРїРёСЃРѕРє РїСѓСЃС‚
+		if (Head == nullptr)//Если список пуст
 		{
 			push_front(Data);
 			return;
 		}
-		//0) РЎРѕР·РґР°С‚СЊ СЌР»РµРјРµРЅС‚:
+		//0) Создать элемент:
 		//Element* New = new Element(Data);
-		//1) Р”РѕР№С‚Рё РґРѕ РїРѕСЃР»РµРґРЅРµРіРѕ СЌР»РµРјРµРЅС‚Р°
+		//1) Дойти до последнего элемента
 		Element* Temp = Head;
 		while (Temp->pNext != nullptr)
 			Temp = Temp->pNext;
-		//2) РџСЂРёРєСЂРµРїРёС‚СЊ РґРѕР±Р°РІР»СЏРµРјС‹ СЌР»РµРјРµРЅС‚ Рє РєРѕРЅС†Сѓ СЃРїРёСЃРєР°
+		//2) Прикрепить добавляемы элемент к концу списка
 		Temp->pNext = new Element(Data);
 		++size;
 	}
+
 	void insert(int Index, int Data)
 	{
-		//1) Р”РѕС…РѕРґРёРј РґРѕ РЅСѓР¶РЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°:
+		//1) Доходим до нужного элемента:
 		Element* Temp = Head;
 		for (int i = 0; i < Index - 1; i++)
 		{
@@ -196,34 +190,75 @@ public:
 		}
 		--size;
 	}
+	//			Methods
 	void print()
 	{
-		Element* Temp = Head;	//Temp - СЌС‚Рѕ РёС‚РµСЂР°С‚РѕСЂ.
-		//РС‚РµСЂР°С‚РѕСЂ - СЌС‚Рѕ СѓРєР°Р·Р°С‚РµР»СЊ, РїСЂРё РїРѕРјРѕС‰Рё РєРѕС‚РѕСЂРѕРіРѕ РјРѕР¶РЅРѕ РїРѕР»СѓС‡РёС‚СЊ РґРѕСЃС‚СѓРї 
-		//Рє СЌР»РµРјРµРЅС‚Р°Рј СЃС‚СЂСѓРєС‚СѓСЂС‹ РґР°РЅРЅС‹С….
+		Element* Temp = Head;	//Temp - это итератор.
+		//Итератор - это указатель, при помощи которого можно получить доступ 
+		//к элементам структуры данных.
 		//while (Temp != nullptr)
 		//{
 		//	cout << Temp << tab << Temp->Data << tab << Temp->pNext << endl;
-		//	Temp = Temp->pNext;	//РџРµСЂРµС…РѕРґ РЅР° СЃР»РµРґСѓСЋС‰РёР№ СЌР»РµРјРµРЅС‚
+		//	Temp = Temp->pNext;	//Переход на следующий элемент
 		//}
-		for (Iterator it = Head; it != nullptr;++it) {
+		for (Iterator it = Head; it != nullptr; ++it) {
 			cout << *it << tab << endl;
 		}
-		cout << "РљРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ СЃРїРёСЃРєР°: " << size << endl;
+		cout << "Количество элементов списка: " << size << endl;
 	}
 };
-List operator+(const List& left, const List& right) {
-	List cat = left;
-	for (Iterator it = right.begin(); it != right.end(); ++it) {
-		cat.push_back(*it);
+//#define BASE_CHECK
+//#define COUNT_CHECK
+void main()
+{
+	setlocale(LC_ALL, "");
+	int n;	//Размер списка
+	cout << "Введите размер списка: "; cin >> n;
+#ifdef BASE_CHECK
+	List list;
+	/*list.push_back(3);
+	list.push_back(5);
+	list.push_back(8);
+	list.push_back(13);
+	list.push_back(21);*/
+	for (int i = 0; i < n; i++)
+	{
+		list.push_back(rand() % 100);
 	}
-#ifdef CHECK
-	cout << "Operator+:\t" << endl;
-#endif // CHECK
-	return cat;
-}
+	list.print();
+	list.push_back(123);
+	list.print();
 
-void main(){
-	system("chcp 1251 > nul");
-	cout << "Hello World!";
+	int index;
+	int data;
+	cout << "Введите индекс добавляемого элемента: "; cin >> index;
+	cout << "Введите значение добавляемого элемента: "; cin >> data;
+	list.insert(index, data);
+	list.print();
+
+	List list2;
+	list2.push_back(123);
+	list2.push_back(456);
+	list2.push_back(789);
+	list2.print();
+#endif //BASE_CHECK
+#ifdef COUNT_CHECK
+	List list(n);
+	for (int i = 0; i < n; ++i) {
+		list[i] = rand() % 100;
+	}
+	for (int i = 0; i < n; ++i) {
+		cout << list[i] << "\t";
+	}
+	cout << endl;
+	List list2;
+	list2 = list;
+	list2.print();
+#endif //COUNT_CHECK
+	List list(n);
+	for (int& i : list) {
+		i = rand() % 100;
+	}
+
+	list.print();
 }
