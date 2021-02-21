@@ -11,12 +11,10 @@ public:
 	Element(int Data, Element* pNext = nullptr) :Data(Data), pNext(pNext)
 	{
 		++count;
-		cout << "EConstructor:\t" << this << endl;
 	}
 	~Element()
 	{
 		--count;
-		cout << "EDestructor:\t" << this << endl;
 	}
 	friend class Iterator;
 	friend class List;
@@ -27,10 +25,8 @@ class Iterator {
 	Element* Temp;
 public:
 	Iterator(Element* Temp) :Temp(Temp) {
-		cout << "IConstructor:\t" << this << endl;
 	}
 	~Iterator() {
-		cout << "IDestructor:\t" << endl;
 	}
 	Iterator& operator++() {
 		Temp = Temp->pNext;
@@ -72,11 +68,12 @@ public:
 	const Iterator end() const {
 		return nullptr;
 	}
-	List()
-	{
-	//size=0;
+	List(){
+		size=0;
 		Head = nullptr;	//Если Голова содержит 0, значит список пуст
+		#ifdef CHECK
 		cout << "LConstructor:\t" << this << endl;
+		#endif
 	}
 	explicit List(int size):List(){
 		//this->Head = nullptr;
@@ -86,14 +83,17 @@ public:
 		}
 		//cout << "LSizeConstructor:\t" << this << endl;
 	}
-	List(const List& other) {
+	List(const List& other) : List() {
 		Element* Temp = other.Head;
 		while (Temp) {
 			push_back(Temp->Data);
 			Temp = Temp->pNext;
 		}
-		cout << "CopyConstructor:\t" << this << endl;
-	
+	}
+	List(List&& other) {
+		this->Head = other.Head;
+		this->size = other.size;
+		other.Head = nullptr;
 	}
 	List(const initializer_list<int> il) : List() {
 		//cout << typeid(il.begin()).name() << endl;
@@ -106,9 +106,7 @@ public:
 		while (Head) {
 			pop_front();
 		}
-		cout << "LDestructor:\t" << this << endl;
 	}
-	//		 Operators:
 	int& operator[](const int index) {
 		if (index >= size) {
 			throw exception("Out of range");
@@ -119,18 +117,27 @@ public:
 		}
 		return Temp->Data;
 	}
-
 	List& operator=(const List& other) {
-		while (Head){
-			pop_front();
+		if (this != &other) {
+			while (Head) {
+				pop_front();
+			}
+			for (Element* Temp = other.Head; Temp != nullptr; Temp = Temp->pNext) {
+				push_back(Temp->Data);
+			}
 		}
-		for (Element* Temp = other.Head; Temp != nullptr; Temp = Temp->pNext) {
-			push_back(Temp->Data);
-		}
-		cout << "CopyAssigment:\t"<<endl;
 		return *this;
 	}
-	//			Добавление элементов
+	List& operator=(List&& other) {
+			while (Head) {
+				pop_front();
+			}
+			this->Head = other.Head;
+			this->size = other.size;
+			other.Head = nullptr;
+		return *this;
+	}
+	
 	void push_front(int Data)	//Добавляет значение в начало списка
 	{
 		
@@ -162,7 +169,6 @@ public:
 		Temp->pNext = new Element(Data);
 		++size;
 	}
-
 	void insert(int Index, int Data)
 	{
 		//1) Доходим до нужного элемента:
@@ -190,7 +196,6 @@ public:
 		}
 		--size;
 	}
-	//			Methods
 	void print()
 	{
 		Element* Temp = Head;	//Temp - это итератор.
@@ -207,58 +212,18 @@ public:
 		cout << "Количество элементов списка: " << size << endl;
 	}
 };
-//#define BASE_CHECK
-//#define COUNT_CHECK
-void main()
-{
-	setlocale(LC_ALL, "");
-	int n;	//Размер списка
-	cout << "Введите размер списка: "; cin >> n;
-	#ifdef BASE_CHECK
-	List list;
-	/*list.push_back(3);
-	list.push_back(5);
-	list.push_back(8);
-	list.push_back(13);
-	list.push_back(21);*/
-	for (int i = 0; i < n; i++)
-	{
-		list.push_back(rand() % 100);
+List operator+(const List& left, const List& right) {
+	List cat = left;
+	for (Iterator it = right.begin(); it != right.end(); ++it) {
+		cat.push_back(*it);
 	}
-	list.print();
-	list.push_back(123);
-	list.print();
+#ifdef CHECK
+	cout << "Operator+:\t" << endl;
+#endif // CHECK
+	return cat;
+}
 
-	int index;
-	int data;
-	cout << "Введите индекс добавляемого элемента: "; cin >> index;
-	cout << "Введите значение добавляемого элемента: "; cin >> data;
-	list.insert(index, data);
-	list.print();
-
-	List list2;
-	list2.push_back(123);
-	list2.push_back(456);
-	list2.push_back(789);
-	list2.print();
-	#endif //BASE_CHECK
-	#ifdef COUNT_CHECK
-	List list(n);
-	for (int i = 0; i < n; ++i) {
-		list[i] = rand() % 100;
-	}
-	for (int i = 0; i < n; ++i) {
-		cout << list[i] << "\t";
-	}
-	cout << endl;
-	List list2;
-	list2 = list;
-	list2.print();
-	#endif //COUNT_CHECK
-	List list(n);
-	for (int& i : list) {
-		i = rand() % 100;
-	}
-	
-	list.print();
+void main(){
+	system("chcp 1251 > nul");
+	cout << "Hello World!";
 }
