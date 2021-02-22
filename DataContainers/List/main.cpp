@@ -18,6 +18,7 @@ private:
 	}*head, *tail;//Указатель на Голову и Хвост
 
 	class Iterator {
+	private:
 		Element* cur;
 	public:
 		Iterator(Element* cur) :cur(cur) {}
@@ -103,7 +104,7 @@ private:
 		++size;
 	}
 
-	//алгоритм исключения из начала или в конца
+	//алгоритм исключения из начала или конца
 	void pop(Element*& a, bool front = true) {
 		if (a) {
 			Element* temp = a;
@@ -250,10 +251,13 @@ public:
 		}
 	}
 	//сортировка
-	void sort() {
-		for (auto& el1 : *this) {
-			for (auto& el2 : *this) {
-				if (el1 < el2) {
+	void sort(bool f=true) {
+		auto pred = [&f](T& a, T& b) {
+			return (f) ? a<b : a>b;
+		};
+		for (T& el1 : *this) {
+			for (T& el2 : *this) {
+				if (pred(el1, el2)) {
 					auto buf = el1;
 					el1 = el2;
 					el2 = buf;
@@ -282,30 +286,74 @@ List<T> operator+(const List<T>& left, const List<T>& right) {
 void main(){
 	system("chcp 1251 > nul");
 	cout << "Проверочный код:\n";
+	cout << "Создаём List<int> l: \n"
+		">------------------------->\n";
 	List<int> l = { 3,5,8,13,21 };
 	for (int i : l) {
 		cout << i << tab;
 	}
 	cout<<endl;
+	cout << ">------------------------->\n"
+		"Выводим l[1]:\n"
+		">------------------------->\n";
 	cout << l[1]<<endl;
+
+	cout << ">------------------------->\n"
+		"Создаём List<int> l1,l2:\n"
+		">------------------------->\n";
 	List<int> l1,l2;
+	cout << ">------------------------->\n"
+		"l1.push_back(124);\n"
+		"l1.push_front(111);\n"
+		"l1.push_back(15);\n"
+		"l1.push_back(51);\n"
+		"l1.insert(2, 9999);\n"
+		"l1.erase(3);\n"
+		"l1.print();\n"
+		">------------------------->\n";
 	l1.push_back(124);
 	l1.push_front(111);
 	l1.push_back(15);
 	l1.push_back(51);
 	l1.insert(2, 9999);
-	//l1.erase(2);
+	l1.erase(3);
+	l1.print();
+
+	cout << ">------------------------->\n"
+		"l1.sort();\n"
+			"l1.print();\n"
+		">------------------------->\n";
+
 	l1.sort();
 	l1.print();
+
+	cout << ">------------------------->\n"
+		"l1.pop_back();\n"
+			"l1.pop_front();\n"
+			"l1.print();\n"
+		">------------------------->\n";
 
 	l1.pop_back();
 	l1.pop_front();
 	l1.print();
+
+	cout <<">------------------------->\n" 
+		"l2 = l1;\n"
+			"l2.print();\n"
+		">------------------------->\n";
+
 	l2 = l1;
 	l2.print();
 
+	cout<<">------------------------->\n"
+		"Создаём List<string> l3:\n"
+		"l3.sort(false);\n//сортировка по убыванию"
+		"l3.print();\n"
+		">------------------------->\n";
 	List<string> l3 = {"Маша","Кристина","Наташа"};
-		//l3=l2+l1;
+	l3.sort(false);
 	l3.print();
+
+
 	system("pause");
 }
