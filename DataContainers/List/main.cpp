@@ -223,8 +223,7 @@ public:
 		else {
 			Element* cur = find(index);
 			Element* temp = cur;
-			cur = new Element(data, cur, cur->pPrev);
-			temp->pPrev = cur;
+			temp->pPrev = cur = new Element(data, cur, cur->pPrev);
 			cur->pPrev->pNext = cur;
 			++size;
 		}
