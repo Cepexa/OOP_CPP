@@ -88,17 +88,14 @@ private:
 		if (a) {
 			Element* temp = a;
 			if (front) {
-				a = new Element(Data, a);
-				temp->pPrev = a;
+				temp->pPrev = a = new Element(Data, a);//в начало
 			}
 			else {
-				a = new Element(Data, nullptr, a);
-				temp->pNext = a;
+				temp->pNext = a = new Element(Data, nullptr, a);//в конец
 			}
 		}
 		else {
-			a = new Element(Data);
-			b = a;
+			b = a = new Element(Data);//когда список пуст
 		}
 		++size;
 	}
@@ -271,6 +268,12 @@ public:
 		}
 		cout << "Количество элементов списка: " << size << endl;
 	}
+	void print_reverce() {
+		for (Element* Temp = tail; Temp != nullptr; Temp = Temp->pPrev) {
+			cout << Temp->data << tab << endl;
+		}
+		cout << "Количество элементов списка: " << size << endl;
+	}
 };
 
 template<typename T>
@@ -317,7 +320,7 @@ void main(){
 	l1.insert(2, 9999);
 	l1.erase(3);
 	l1.print();
-
+	l1.print_reverce();
 	cout << ">------------------------->\n"
 		"l1.sort();\n"
 			"l1.print();\n"
