@@ -1,5 +1,6 @@
 ﻿#include<iostream>
 using namespace std;
+using std::cout;
 #define tab "\t"
 
 template<typename T>
@@ -15,54 +16,6 @@ private:
 		Element(T Data, Element* pNext = nullptr, Element* pPrev = nullptr) :
 			data(Data), pNext(pNext), pPrev(pPrev) {}
 	}*head, *tail;//Указатель на Голову и Хвост
-
-	class Iterator {
-	private:
-		Element* cur;
-	public:
-		Iterator(Element* cur) :cur(cur) {}
-		~Iterator(){}
-		//префиксный инкремент
-		Iterator& operator++() {
-			cur = cur->pNext;
-			return *this;
-		}
-		//постфиксный инкремент
-		Iterator operator++(int) {
-			Iterator temp = *this;
-			cur = cur->pNext;
-			return temp;
-		}
-		//префиксный декремент
-		Iterator& operator--() {
-			cur = cur->pPrev;
-			return *this;
-		}
-		//постфиксный декремент
-		Iterator operator--(int) {
-			Iterator temp = *this;
-			cur = cur->pPrev;
-			return temp;
-		}
-		//оператор разыменования const
-		const T& operator*()const {
-			return cur->data;
-		}
-		//оператор разыменования
-		T& operator*() {
-			return cur->data;
-		}
-		bool operator==(const Iterator& other) const {
-			return this->cur == other.cur;
-		}
-		bool operator!=(const Iterator& other) const {
-			return !operator==(other);
-		}
-		//оператор приведения типов
-		operator Element*() {
-			return this->cur;
-		}
-	};
 
 
 	//алгоритм копирования
@@ -116,11 +69,80 @@ private:
 			--size;
 		}
 	}
-	//конкатенация двух списков
-	template<typename T>
-	friend List<T> operator+(const List<T>& left, const List<T>& right);
 
 public:
+
+	class Iterator{
+	protected:
+		Element* cur;
+	public:
+		Iterator(Element* cur) :cur(cur) {}
+		//префиксный инкремент
+		Iterator& operator++() {
+			cur = cur->pNext;
+			return *this;
+		}
+		//постфиксный инкремент
+		Iterator operator++(int) {
+			Iterator temp = *this;
+			cur = cur->pNext;
+			return temp;
+		}
+		//префиксный декремент
+		Iterator& operator--() {
+			cur = cur->pPrev;
+			return *this;
+		}
+		//постфиксный декремент
+		Iterator operator--(int) {
+			Iterator temp = *this;
+			cur = cur->pPrev;
+			return temp;
+		}
+		//оператор разыменования const
+		const T& operator*()const {
+			return cur->data;
+		}
+		//оператор разыменования
+		T& operator*() {
+			return cur->data;
+		}
+		bool operator==(const Iterator& other) const {
+			return this->cur == other.cur;
+		}
+		bool operator!=(const Iterator& other) const {
+			return !operator==(other);
+		}
+		//оператор приведения типов
+		operator Element* () {
+			return this->cur;
+		}
+	};
+	class ReverseIterator : public Iterator {
+	public:
+		ReverseIterator(Element* cur) : Iterator(cur) {}
+		//префиксный декремент 
+		Iterator& operator--() {
+			return Iterator::operator++();
+		}
+		//постфиксный декремент 
+		Iterator operator--(int) {
+			Iterator temp = *this;
+			Iterator::operator++();
+			return temp;
+		}
+		//префиксный инкремент
+		Iterator& operator++() {
+			return Iterator::operator--();
+		}
+		//постфиксный инкремент
+		Iterator operator++(int) {
+			Iterator temp = *this;
+			Iterator::operator--();
+			return temp;
+		}
+	};
+
 	Iterator begin() {
 		return head;
 	}
@@ -133,12 +155,26 @@ public:
 	const Iterator end() const {
 		return nullptr;
 	}
+	ReverseIterator rbegin() {
+		return tail;
+	}
+	ReverseIterator rend() {
+		return nullptr;
+	}
+	const ReverseIterator rbegin() const {
+		return tail;
+	}
+	const ReverseIterator rend() const {
+		return nullptr;
+	}
+
 	List(){
 		size=0;
 		head = nullptr;
 		tail = nullptr;
 	}
 	explicit List(int size):List(){
+		++size;
 		while (--size) {
 			push_front(0);
 		}
@@ -159,6 +195,8 @@ public:
 			pop_front();
 		}
 	}
+
+
 	List& operator=(const List& other) {
 		if (this != &other) {
 			this->~List();
@@ -171,6 +209,7 @@ public:
 			move(other);
 		return *this;
 	}
+
 	//Добавляет значение в начало списка
 	void push_front(T data){
 		push(data, head, tail);
@@ -245,7 +284,7 @@ public:
 			--size;
 		}
 	}
-	//сортировка
+	//сортировка (f=true - по возрастанию, f=false - по убыванию)
 	void sort(bool f=true) {
 		auto pred = [&f](T& a, T& b) {
 			return (f) ? a<b : a>b;
@@ -267,14 +306,20 @@ public:
 		}
 		cout << "Количество элементов списка: " << size << endl;
 	}
+	//вывод в консоль в обратном порядке
 	void print_reverce() {
-		for (Element* Temp = tail; Temp != nullptr; Temp = Temp->pPrev) {
-			cout << Temp->data << tab << endl;
+		for (auto rIt = rbegin(); rIt != rend(); ++rIt) {
+			cout << *rIt << tab << endl;
 		}
 		cout << "Количество элементов списка: " << size << endl;
 	}
+
+	int getSize() {
+		return size;
+	}
 };
 
+//конкатенация двух списков
 template<typename T>
 List<T> operator+(const List<T>& left, const List<T>& right) {
 	List<T> cat = left;
@@ -286,6 +331,9 @@ List<T> operator+(const List<T>& left, const List<T>& right) {
 
 void main(){
 	system("chcp 1251 > nul");
+
+//#define BASE_CHECK
+#ifdef BASE_CHECK
 	cout << "Проверочный код:\n";
 	cout << "Создаём List<int> l: \n"
 		">------------------------->\n";
@@ -293,16 +341,16 @@ void main(){
 	for (int i : l) {
 		cout << i << tab;
 	}
-	cout<<endl;
+	cout << endl;
 	cout << ">------------------------->\n"
 		"Выводим l[1]:\n"
 		">------------------------->\n";
-	cout << l[1]<<endl;
+	cout << l[1] << endl;
 
 	cout << ">------------------------->\n"
 		"Создаём List<int> l1,l2:\n"
 		">------------------------->\n";
-	List<int> l1,l2;
+	List<int> l1, l2;
 	cout << ">------------------------->\n"
 		"l1.push_back(124);\n"
 		"l1.push_front(111);\n"
@@ -322,7 +370,7 @@ void main(){
 	l1.print_reverce();
 	cout << ">------------------------->\n"
 		"l1.sort();\n"
-			"l1.print();\n"
+		"l1.print();\n"
 		">------------------------->\n";
 
 	l1.sort();
@@ -330,17 +378,17 @@ void main(){
 
 	cout << ">------------------------->\n"
 		"l1.pop_back();\n"
-			"l1.pop_front();\n"
-			"l1.print();\n"
+		"l1.pop_front();\n"
+		"l1.print();\n"
 		">------------------------->\n";
 
 	l1.pop_back();
 	l1.pop_front();
 	l1.print();
 
-	cout <<">------------------------->\n" 
+	cout << ">------------------------->\n"
 		"l2 = l1;\n"
-			"l2.print();\n"
+		"l2.print();\n"
 		">------------------------->\n";
 
 	l2 = l1;
@@ -350,14 +398,57 @@ void main(){
 		">------------------------->\n";
 	(l + l1 + l2).print();
 
-	cout<<">------------------------->\n"
+	cout << ">------------------------->\n"
 		"Создаём List<string> l3:\n"
 		"l3.sort(false); //сортировка по убыванию\n"
 		"l3.print();\n"
 		">------------------------->\n";
-	List<string> l3 = {"Маша","Кристина","Наташа"};
+	List<string> l3 = { "Маша","Кристина","Наташа" };
 	l3.sort(false);
 	l3.print();
+	cout << ">------------------------->\n"
+		"for (auto it = l3.rbegin(); it != l3.rend(); ++it) {\n"
+		"   cout << *it << endl;\n"
+		"}\n"
+		">------------------------->\n";
+	for (auto it = l3.rbegin(); it != l3.rend(); ++it) {
+		cout << *it << endl;
+	}
+#endif // BASE_CHECK
+
+	
+//#define SUBSCRIPT
+#ifdef SUBSCRIPT
+	int n;
+	cout << "Введите количество элементов: "; cin >> n;
+	List<int> list(n);
+	cout << "Список создан загружаем данные...\n";
+	for (size_t i = 0; i < list.getSize(); ++i)	{
+
+		list[i] = rand();
+
+	}
+	/*for (auto& el : list) {
+		el = rand();
+	}*/
+	cout << endl;
+	cout << "Список загружен...\n";
+#endif // subscript
+
+//#define CHECK_2
+#ifdef CHECK_2
+	cout << "Проверочный код Iterator:\n";
+	List<int> l = { 3,5,8,13,21 };
+	for (auto it = l.begin(); it != l.end(); ++it) {
+		cout << *it << endl;
+	}
+	cout << endl;
+	cout << "Проверочный код ReverseIterator:\n";
+	for (auto it = l.rbegin(); it != l.rend(); it++) {
+		cout << *it<<endl;
+	}
+
+#endif // CHECK_2
 
 
 	system("pause");
