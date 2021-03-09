@@ -1,4 +1,4 @@
-#include<iostream>
+п»ї#include<iostream>
 using namespace std;
 using std::cout;
 #define tab "\t"
@@ -9,13 +9,13 @@ class ForwardList{
 	int size;
 
 	struct Element {
-		T data; //Значение элемента
-		Element* pNext; //Адрес следующего элемента
+		T data; //Р—РЅР°С‡РµРЅРёРµ СЌР»РµРјРµРЅС‚Р°
+		Element* pNext; //РђРґСЂРµСЃ СЃР»РµРґСѓСЋС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р°
 		Element(T data, Element* pNext = nullptr) :
 			data(data), pNext(pNext) {}
-	}* head;	//Указатель на начальный (нулевой) элемент списка.
+	}* head;	//РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РЅР°С‡Р°Р»СЊРЅС‹Р№ (РЅСѓР»РµРІРѕР№) СЌР»РµРјРµРЅС‚ СЃРїРёСЃРєР°.
 
-	//алгоритм копирования
+	//Р°Р»РіРѕСЂРёС‚Рј РєРѕРїРёСЂРѕРІР°РЅРёСЏ
 	void copy(Element* temp) {
 		if (temp->pNext) {
 			copy(temp->pNext);
@@ -23,7 +23,7 @@ class ForwardList{
 		push_front(temp->data);
 	}
 	
-	//алгоритм переноса
+	//Р°Р»РіРѕСЂРёС‚Рј РїРµСЂРµРЅРѕСЃР°
 	void move(ForwardList& other) {
 		this->head = other.head;
 		this->size = other.size;
@@ -57,7 +57,7 @@ public:
 		bool operator!=(const Iterator& other) const {
 			return !(*this == other);
 		}
-		//оператор приведения типов
+		//РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ С‚РёРїРѕРІ
 		operator Element* () {
 			return this->cur;
 		}
@@ -77,7 +77,7 @@ public:
 	}
 	ForwardList(){
 		size=0;
-		head = nullptr;	//Если Голова содержит 0, значит список пуст
+		head = nullptr;	//Р•СЃР»Рё Р“РѕР»РѕРІР° СЃРѕРґРµСЂР¶РёС‚ 0, Р·РЅР°С‡РёС‚ СЃРїРёСЃРѕРє РїСѓСЃС‚
 	}
 	explicit ForwardList(int size) :ForwardList() {
 		++size;
@@ -114,7 +114,7 @@ public:
 		move(other);
 		return *this;
 	}
-	//поиск элемента по индексу
+	//РїРѕРёСЃРє СЌР»РµРјРµРЅС‚Р° РїРѕ РёРЅРґРµРєСЃСѓ
 	Iterator find(const int& index) {
 		if ((index >= size) || (index < 0)) {
 			throw exception("Out of range");
@@ -123,13 +123,13 @@ public:
 		advance(temp, index);
 		return temp;
 	}
-	//сдвиг итератора на нужное количество шагов вправо
+	//СЃРґРІРёРі РёС‚РµСЂР°С‚РѕСЂР° РЅР° РЅСѓР¶РЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ С€Р°РіРѕРІ РІРїСЂР°РІРѕ
 	void advance(Iterator& it, const int& count) {
 		for (int i = 0; i < count; ++i) {
 			 ++it;
 		}
 	}
-	//Добавление элементов
+	//Р”РѕР±Р°РІР»РµРЅРёРµ СЌР»РµРјРµРЅС‚РѕРІ
 	void push_front(T data){
 			head = new Element(data, head);
 		++size;
@@ -144,7 +144,7 @@ public:
 			push_front(data);
 		}
 	}
-	//Удаление элементов
+	//РЈРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚РѕРІ
 	void pop_front() {
 		if (head) {
 			Element* temp = head;
@@ -191,11 +191,11 @@ public:
 			--size;
 		}
 	}
-	//размер листа
+	//СЂР°Р·РјРµСЂ Р»РёСЃС‚Р°
 	int getSize() {
 		return size;
 	}
-	//сортировка (f=true - по возрастанию, f=false - по убыванию)
+	//СЃРѕСЂС‚РёСЂРѕРІРєР° (f=true - РїРѕ РІРѕР·СЂР°СЃС‚Р°РЅРёСЋ, f=false - РїРѕ СѓР±С‹РІР°РЅРёСЋ)
 	void sort(bool f = true) {
 		auto pred = [&f](T& a, T& b) {
 			return (f) ? a<b : a>b;
@@ -216,11 +216,11 @@ public:
 		for (Iterator it = head; it != end(); ++it) {
 			cout << *it << tab << endl;
 		}
-		cout << "Количество элементов списка: " << size << endl;
+		cout << "РљРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ СЃРїРёСЃРєР°: " << size << endl;
 	}
 };
 
-//конкатенация двух списков
+//РєРѕРЅРєР°С‚РµРЅР°С†РёСЏ РґРІСѓС… СЃРїРёСЃРєРѕРІ
 template<typename T>
 ForwardList<T> operator+(const ForwardList<T>& left, const ForwardList<T>& right) {
 	ForwardList<T> cat = left;
@@ -232,8 +232,8 @@ ForwardList<T> operator+(const ForwardList<T>& left, const ForwardList<T>& right
 
 void main(){
 	system("chcp 1251 > nul");
-	int n;	//Размер списка
-	cout << "Введите размер списка: "; cin >> n;
+	int n;	//Р Р°Р·РјРµСЂ СЃРїРёСЃРєР°
+	cout << "Р’РІРµРґРёС‚Рµ СЂР°Р·РјРµСЂ СЃРїРёСЃРєР°: "; cin >> n;
 #define BASE_CHECK
 #ifdef BASE_CHECK
 	ForwardList<int> list;
@@ -252,8 +252,8 @@ void main(){
 
 	int index;
 	int data;
-	cout << "Введите индекс добавляемого элемента: "; cin >> index;
-	cout << "Введите значение добавляемого элемента: "; cin >> data;
+	cout << "Р’РІРµРґРёС‚Рµ РёРЅРґРµРєСЃ РґРѕР±Р°РІР»СЏРµРјРѕРіРѕ СЌР»РµРјРµРЅС‚Р°: "; cin >> index;
+	cout << "Р’РІРµРґРёС‚Рµ Р·РЅР°С‡РµРЅРёРµ РґРѕР±Р°РІР»СЏРµРјРѕРіРѕ СЌР»РµРјРµРЅС‚Р°: "; cin >> data;
 	list.insert(index, data);
 	list.print();
 	//list.erase(index);
@@ -271,7 +271,7 @@ void main(){
 	list2.print();
 
 
-	ForwardList<string> l3 = { "Маша","Кристина","Наташа" };
+	ForwardList<string> l3 = { "РњР°С€Р°","РљСЂРёСЃС‚РёРЅР°","РќР°С‚Р°С€Р°" };
 	l3.sort(false);
 	l3.print();
 #endif //BASE_CHECK
