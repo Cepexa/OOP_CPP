@@ -1,4 +1,4 @@
-#include <iostream>
+ï»¿#include <iostream>
 using namespace std;
 
 template<typename T>
@@ -47,7 +47,7 @@ class Tree {
 	int size(Element* root) {
 		return (root) ? size(root->pLeft) + size(root->pRight) + 1 : 0;
 	}
-	//sum òîëüêî äëÿ ÷èñëîâûõ òèïîâ îñòàâèì int
+	//sum Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð´Ð»Ñ Ñ‡Ð¸ÑÐ»Ð¾Ð²Ñ‹Ñ… Ñ‚Ð¸Ð¿Ð¾Ð² Ð¾ÑÑ‚Ð°Ð²Ð¸Ð¼ int
 	int sum(Element* root) {
 		return (root) ?  sum(root->pLeft) + sum(root->pRight) + root->data : 0;
 	}
@@ -69,7 +69,7 @@ class Tree {
 			return cur;
 		}
 	}
-	//ïîèñê ðîäèòåëÿ
+	//Ð¿Ð¾Ð¸ÑÐº Ñ€Ð¾Ð´Ð¸Ñ‚ÐµÐ»Ñ
 	Iterator findParent(Element* child, bool& direction) {
 		return (this->root->pLeft== this->root->pRight)? nullptr:findParent(child->data, child, this->root, direction);
 	}
@@ -130,7 +130,7 @@ public:
 	public:
 		Iterator() :cur(nullptr),root(nullptr){}
 		Iterator(Element* cur) :cur(cur) {}
-		//îïåðàòîð ðàçûìåíîâàíèÿ
+		//Ð¾Ð¿ÐµÑ€Ð°Ñ‚Ð¾Ñ€ Ñ€Ð°Ð·Ñ‹Ð¼ÐµÐ½Ð¾Ð²Ð°Ð½Ð¸Ñ
 		T& operator*() {
 			return cur->data;
 		}
@@ -140,16 +140,16 @@ public:
 		bool operator!=(const Iterator& other) const {
 			return !operator==(other);
 		}
-		//îïåðàòîð ïðèâåäåíèÿ òèïîâ
+		//Ð¾Ð¿ÐµÑ€Ð°Ñ‚Ð¾Ñ€ Ð¿Ñ€Ð¸Ð²ÐµÐ´ÐµÐ½Ð¸Ñ Ñ‚Ð¸Ð¿Ð¾Ð²
 		operator Element* () {
 			return this->cur;
 		}
 	};
-	//ïîèñê ïî çíà÷åíèþ
+	//Ð¿Ð¾Ð¸ÑÐº Ð¿Ð¾ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸ÑŽ
 	Iterator find(T data) {
 		return find(data,this->root);
 	}
-	//óäàëåíèå ïî çíà÷åíèþ
+	//ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸Ðµ Ð¿Ð¾ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸ÑŽ
 	void erase(T data){
 		Element* del = find(data);
 		erase(del);
@@ -198,11 +198,11 @@ public:
 	int size() {
 		return size(this->root);
 	}
-	//sum òîëüêî äëÿ ÷èñëîâûõ òèïîâ îñòàâèì int
+	//sum Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð´Ð»Ñ Ñ‡Ð¸ÑÐ»Ð¾Ð²Ñ‹Ñ… Ñ‚Ð¸Ð¿Ð¾Ð² Ð¾ÑÑ‚Ð°Ð²Ð¸Ð¼ int
 	int sum() {
 		return sum(this->root);
 	}
-	//avg òîëüêî äëÿ ÷èñëîâûõ òèïîâ îñòàâèì float
+	//avg Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð´Ð»Ñ Ñ‡Ð¸ÑÐ»Ð¾Ð²Ñ‹Ñ… Ñ‚Ð¸Ð¿Ð¾Ð² Ð¾ÑÑ‚Ð°Ð²Ð¸Ð¼ float
 	float avg() {
 		return (this->root)?(float)sum() / size():0;
 	}
@@ -218,7 +218,7 @@ int main() {
 
 	Tree<int> t;
 
-	cout << "Ââåäèòå êîë-âî ýëåìåíòîâ: "; cin >> n;
+	cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐºÐ¾Ð»-Ð²Ð¾ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð²: "; cin >> n;
 	for (int i = 0; t.size() < n; ++i) {
 		t.insert(rand() % 100);
 	}
@@ -227,13 +227,13 @@ int main() {
 	cout << "t1.erase(67) \n";
 	t1.erase(67);
 	t1.print();
-	cout << "ìèíèìàëüíîå çíà÷åíèå â äåðåâå: "<<t1.minValue()<<endl;
-	cout << "ìàêñèìàëüíîå çíà÷åíèå â äåðåâå: " << t1.maxValue() << endl;
-	cout << "êîëè÷åñòâî ýëåìåíòîâ äåðåâà: " << t1.size() << endl;
-	cout << "Ñóììà ýëåìåíòîâ äåðåâà: " << t1.sum() << endl;
-	cout << "Ñðåäíåå çíà÷åíèå ýëåìåíòîâ äåðåâà: " << t1.avg() << endl;
+	cout << "Ð¼Ð¸Ð½Ð¸Ð¼Ð°Ð»ÑŒÐ½Ð¾Ðµ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ Ð² Ð´ÐµÑ€ÐµÐ²Ðµ: "<<t1.minValue()<<endl;
+	cout << "Ð¼Ð°ÐºÑÐ¸Ð¼Ð°Ð»ÑŒÐ½Ð¾Ðµ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ Ð² Ð´ÐµÑ€ÐµÐ²Ðµ: " << t1.maxValue() << endl;
+	cout << "ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð² Ð´ÐµÑ€ÐµÐ²Ð°: " << t1.size() << endl;
+	cout << "Ð¡ÑƒÐ¼Ð¼Ð° ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð² Ð´ÐµÑ€ÐµÐ²Ð°: " << t1.sum() << endl;
+	cout << "Ð¡Ñ€ÐµÐ´Ð½ÐµÐµ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð² Ð´ÐµÑ€ÐµÐ²Ð°: " << t1.avg() << endl;
 	
-	cout << "\nÒèï äàííûõ string: " << endl;
+	cout << "\nÐ¢Ð¸Ð¿ Ð´Ð°Ð½Ð½Ñ‹Ñ… string: " << endl;
 	Tree<string> strTree({ "Hello","World","!" });
 	strTree.print();
 
