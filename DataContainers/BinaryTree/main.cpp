@@ -16,12 +16,12 @@ class Tree {
 		if (this->root) {
 			if (root) {
 				if (data < root->data) {
-					(root->pLeft) ?
+					root->pLeft ?
 						insert(data, root->pLeft), root :
 						root->pLeft = new Element(data);
 				}
 				else if (data > root->data) {
-					(root->pRight) ?
+					root->pRight ?
 						insert(data, root->pRight), root :
 						root->pRight = new Element(data);
 				}
@@ -39,17 +39,17 @@ class Tree {
 		}
 	}
 	T minValue(Element* root) {
-		return (root->pLeft) ? minValue(root->pLeft): root->data;
+		return root->pLeft ? minValue(root->pLeft): root->data;
 	}
 	T maxValue(Element* root) {
-		return (root->pRight) ? maxValue(root->pRight) : root->data;
+		return root->pRight ? maxValue(root->pRight) : root->data;
 	}
 	int size(Element* root) {
-		return (root) ? size(root->pLeft) + size(root->pRight) + 1 : 0;
+		return root ? size(root->pLeft) + size(root->pRight) + 1 : 0;
 	}
 	//sum только для числовых типов оставим int
 	int sum(Element* root) {
-		return (root) ?  sum(root->pLeft) + sum(root->pRight) + root->data : 0;
+		return root ?  sum(root->pLeft) + sum(root->pRight) + root->data : 0;
 	}
 	void copy(Element* root) {
 		if (root) {
@@ -74,12 +74,7 @@ class Tree {
 		return (this->root->pLeft== this->root->pRight)? nullptr:findParent(child->data, child, this->root, direction);
 	}
 	Iterator findParent(T data, Element* child, Element* root,bool& direction) {
-		if (root->pLeft == child) {
-			direction = true;
-			return root;
-		}
-		else if (root->pRight == child) {
-			direction = false;
+		if ((direction = root->pLeft == child) || (root->pRight == child)) {
 			return root;
 		}
 		else {
@@ -107,7 +102,7 @@ class Tree {
 				parent = findParent(root, direction);
 				delete root;
 				if (parent) {
-					(direction) ? parent->pLeft = nullptr : parent->pRight = nullptr;
+					direction ? parent->pLeft = nullptr : parent->pRight = nullptr;
 				}
 				else {
 					this->root = nullptr;
@@ -126,9 +121,8 @@ public:
 	
 	class Iterator {
 		Element* cur;
-		Element* root;
 	public:
-		Iterator() :cur(nullptr),root(nullptr){}
+		Iterator() :cur(nullptr){}
 		Iterator(Element* cur) :cur(cur) {}
 		//оператор разыменования
 		T& operator*() {
@@ -145,18 +139,17 @@ public:
 			return this->cur;
 		}
 	};
-	//поиск по значению
+	//поиск по значению (интерфейсный метод)
 	Iterator find(T data) {
 		return find(data,this->root);
 	}
-	//удаление по значению
+	//удаление по значению (интерфейсный метод)
 	void erase(T data){
 		Element* del = find(data);
 		erase(del);
 	}
 
-	Tree():root(nullptr){
-	}
+	Tree():root(nullptr){}
 
 	Tree(const Tree& other):Tree() {
 			copy(other.root);
@@ -179,21 +172,24 @@ public:
 	~Tree()	{
 		clear(this->root);
 	}
+	//добавления элемента в дерево (интерфейсный метод)
 	void insert(T data) {
 		insert(data, this->root);
 	}
-
+	//удаление всех элементов (аналогичен деструктору)
 	void clear() {
 		clear(this->root);
 	}
 	Element* getRoot() {
 		return this->root;
 	}
+	//крайний левый элемент в дереве
 	T minValue() {
-		return(root) ? minValue(this->root) : 0;
+		return root ? minValue(this->root) : 0;
 	}
+	//крайний правый элемент в дереве
 	T maxValue() {
-		return(root) ? maxValue(this->root) : 0;
+		return root ? maxValue(this->root) : 0;
 	}
 	int size() {
 		return size(this->root);
@@ -204,7 +200,7 @@ public:
 	}
 	//avg только для числовых типов оставим float
 	float avg() {
-		return (this->root)?(float)sum() / size():0;
+		return this->root ?(float)sum() / size():0;
 	}
 	void print(){
 		print(this->root);
@@ -227,6 +223,10 @@ int main() {
 	cout << "t1.erase(67) \n";
 	t1.erase(67);
 	t1.print();
+
+	cout << "Поиск t1.find(41): ";
+	t1.find(41) ? cout << *t1.find(41) : cout << "элемент не найден";
+	cout << endl;
 	cout << "минимальное значение в дереве: "<<t1.minValue()<<endl;
 	cout << "максимальное значение в дереве: " << t1.maxValue() << endl;
 	cout << "количество элементов дерева: " << t1.size() << endl;
@@ -240,6 +240,7 @@ int main() {
 	cout << "strTree.erase(\"!\"); \n";
 	strTree.erase("!");
 	strTree.print();
+
 
 	return 0;
 }
