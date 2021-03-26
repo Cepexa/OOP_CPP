@@ -89,14 +89,14 @@ class Tree {
 			if (root->pRight) {
 				temp = find(minValue(root->pRight));
 				parent = findParent(temp, direction);
-				root->data = temp->data;
 				erase(temp);
+				root->data = temp->data;
 			}
 			else if (root->pLeft) {
 				temp = find(maxValue(root->pLeft));
 				parent = findParent(temp, direction);
-				root->data = temp->data;
 				erase(temp);
+				root->data = temp->data;
 			}
 			else {
 				parent = findParent(root, direction);
