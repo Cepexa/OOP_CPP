@@ -88,13 +88,11 @@ class Tree {
 			Element *temp, *parent;
 			if (root->pRight) {
 				temp = find(minValue(root->pRight));
-				parent = findParent(temp, direction);
 				root->data = temp->data;
 				erase(temp);
 			}
 			else if (root->pLeft) {
 				temp = find(maxValue(root->pLeft));
-				parent = findParent(temp, direction);
 				root->data = temp->data;
 				erase(temp);
 			}
